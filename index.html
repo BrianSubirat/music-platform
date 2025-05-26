@@ -1,135 +1,2448 @@
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Spline+Sans%3Awght%40400%3B500%3B700"
-    />
+    <title>Nonoki - Music Streaming</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <title>MusicStream</title>
-    <link rel="icon" type="image/png" href="favicon.png" />
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #16213e 100%);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script type="importmap">
-    {
-      "imports": {
-        "alpinejs": "https://cdn.skypack.dev/alpinejs@3.12.0"
-      }
-    }
-    </script>
-    <script type="module">
-      import Alpine from 'alpinejs'
-      window.Alpine = Alpine
-      Alpine.start()
-    </script>
-  </head>
-  <body x-data="musicPlayer()" class="relative flex size-full min-h-screen flex-col bg-[#171320] dark group/design-root overflow-x-hidden" style='font-family: "Spline Sans", "Noto Sans", sans-serif;'>
-    <div class="layout-container flex h-full grow flex-col">
-      <div class="gap-1 px-6 flex flex-1 justify-center py-5">
-        <!-- Left Sidebar -->
-        <div class="layout-content-container flex flex-col w-80">
-          <div class="flex h-full min-h-[700px] flex-col justify-between bg-[#171320] p-4">
-            <div class="flex flex-col gap-4">
-              <h1 class="text-white text-base font-medium leading-normal">MusicStream</h1>
-              <div class="flex flex-col gap-2">
-                <!-- Navigation Menu -->
-                <nav x-data="{ activeMenu: 'discover' }">
-                  <div 
-                    @click="activeMenu = 'discover'" 
-                    :class="activeMenu === 'discover' ? 'bg-[#302942]' : ''" 
-                    class="flex items-center gap-3 px-3 py-2 rounded-full cursor-pointer"
-                  >
-                    <div class="text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path d="M168,112a56,56,0,1,1-56-56A56,56,0,0,1,168,112Zm61.66,117.66a8,8,0,0,1-11.32,0l-50.06-50.07a88,88,0,1,1,11.32-11.31l50.06,50.06A8,8,0,0,1,229.66,229.66ZM112,184a72,72,0,1,0-72-72A72.08,72.08,0,0,0,112,184Z"></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Discover</p>
-                  </div>
-                  <!-- Similar structure for other menu items -->
-                  <div 
-                    @click="activeMenu = 'genres'" 
-                    :class="activeMenu === 'genres' ? 'bg-[#302942]' : ''" 
-                    class="flex items-center gap-3 px-3 py-2 rounded-full cursor-pointer"
-                  >
-                    <div class="text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path d="M210.3,56.34l-80-24A8,8,0,0,0,120,40V148.26A48,48,0,1,0,136,184V98.75l69.7,20.91A8,8,0,0,0,216,112V64A8,8,0,0,0,210.3,56.34ZM88,216a32,32,0,1,1,32-32A32,32,0,0,1,88,216ZM200,101.25l-64-19.2V50.75L200,70Z"></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Genres</p>
-                  </div>
-                </nav>
-              </div>
+        .container {
+            display: flex;
+            height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            color: #00ff88;
+        }
+
+        .section-title {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 12px 20px;
+            width: 300px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            color: white;
+            outline: none;
+            margin-left: 10px;
+            width: 100%;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-register {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-login {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* New Releases Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title-main {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .view-all {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Album Grid */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .album-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .album-image {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            transition: filter 0.3s ease;
+            overflow: hidden;
+        }
+
+        .album-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .album-card:hover .album-image img {
+            transform: scale(1.05);
+        }
+
+        .play-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 136, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .album-card:hover .play-button {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .play-button::after {
+            content: '▶';
+            color: white;
+            font-size: 16px;
+            margin-left: 2px;
+        }
+
+        .album-info {
+            padding: 12px;
+            background: rgba(26, 11, 46, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .album-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .album-artist {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Icon styles */
+        .icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+            fill: currentColor;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 220px;
+            width: calc(100% - 220px);
+            height: 100%;
+            background: rgba(23, 19, 32, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .loader {
+            width: 40px;  
+            height: 40px; 
+            border: 5px solid rgba(191, 173, 234, 0.2);
+            border-top: 5px solid #bfadea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 11, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            z-index: 1000;
+        }
+
+        .music-player-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .player-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .player-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 300px;
+        }
+
+        .player-album-art {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .player-album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .song-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .song-title {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .song-artist {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+
+        .mobile-quick-action {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-quick-action {
+                display: flex;
+                background: none;
+                border: none;
+                color: white;
+                align-items: center;
+                justify-content: center;
+                margin-left: 10px;
+            }
+
+            .mobile-quick-action svg {
+                width: 24px;
+                height: 24px;
+                opacity: 0.7;
+            }
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .control-btn:hover {
+            color: #bfadea;
+        }
+
+        .play-pause {
+            background: #bfadea;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #171320;
+        }
+
+        .play-pause:hover {
+            background: #a090d0;
+            color: #171320;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            min-width: 40px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 100%;
+            background: #bfadea;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .progress-handle {
+            width: 12px;
+            height: 12px;
+            background: #bfadea;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            right: -6px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 150px;
+        }
+
+        .volume-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .volume-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .volume-progress {
+            height: 100%;
+            background: #bfadea;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .volume-handle {
+            width: 12px;
+            height: 12px;
+            background: #bfadea;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            right: -6px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* New Styles */
+        .youtube-embed-container {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(26, 11, 46, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1100;
+        }
+
+        .close-embed-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .close-embed-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Mobile Navigation Bar */
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                width: 100%;
+                padding: 20px 15px;
+            }
+
+            .album-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .album-image {
+                height: 180px;
+            }
+
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(26, 11, 46, 0.9);
+                backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                justify-content: space-around;
+                padding: 10px 0;
+                z-index: 1000;
+            }
+
+            .mobile-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                color: rgba(255, 255, 255, 0.6);
+                text-decoration: none;
+                font-size: 12px;
+            }
+
+            .mobile-nav-item.active {
+                color: #00ff88;
+            }
+
+            .mobile-nav-item svg {
+                width: 24px;
+                height: 24px;
+                margin-bottom: 5px;
+            }
+
+            .music-player {
+                bottom: 60px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-nav {
+                display: none;
+            }
+
+            .sidebar {
+                display: block;
+            }
+
+            .music-player {
+                bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .music-player .player-top-row {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .player-left {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: auto;
+                flex: 1;
+            }
+
+            .player-center {
+                flex: 0;
+            }
+
+            .player-right {
+                display: none;
+            }
+
+            .progress-container {
+                display: none;
+            }
+
+            .player-controls {
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .player-controls .control-btn {
+                display: none;
+            }
+
+            .player-controls .previous,
+            .player-controls .play-pause,
+            .player-controls .next {
+                display: flex;
+            }
+
+            .play-pause {
+                width: 40px;
+                height: 40px;
+            }
+
+            .control-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .player-top-row {
+                position: relative;
+                display: grid;
+                grid-template-columns: 300px 1fr 300px;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .player-left {
+                justify-content: flex-start;
+            }
+
+            .player-center {
+                justify-content: center;
+            }
+
+            .player-controls {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                justify-content: center;
+            }
+
+            .progress-container {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        .context-menu {
+            position: fixed;
+            background: rgba(26, 11, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 160px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .context-menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .context-menu-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Account button styles */
+        .btn-account {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-account:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Account menu styles */
+        .account-menu {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(26, 11, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            transition: right 0.3s ease;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .account-menu.active {
+            right: 0;
+        }
+
+        .account-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-picture-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .profile-picture-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .change-picture-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            background: #bfadea;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #171320;
+        }
+
+        .settings-section .form-group {
+            margin-bottom: 20px;
+        }
+
+        .settings-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .settings-section input,
+        .settings-section select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+        }
+
+        .settings-section input:focus,
+        .settings-section select:focus {
+            outline: none;
+            border-color: #bfadea;
+        }
+
+        .btn-save {
+            width: 100%;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #bfadea, #8e7cc3);
+        }
+
+        .btn-delete-account {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        .btn-delete-account:hover {
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .account-menu {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        /* Add new styles for popular tracks */
+        .popular-tracks {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .track-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .track-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 16px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .track-number {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            width: 20px;
+        }
+
+        .track-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .track-thumbnail {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .track-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .track-title-artist {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .track-title {
+            color: white;
+            font-size: 14px;
+        }
+
+        .track-artist {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+
+        .track-duration {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .track-action {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .track-item:hover .track-action {
+            opacity: 1;
+        }
+
+        .heart-icon {
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .heart-icon:hover {
+            color: #ff4081;
+        }
+
+        /* Add new styles for playlist creation */
+        .create-playlist {
+            padding: 0 0 15px 0;
+        }
+
+        .create-playlist-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 0;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .create-playlist-btn:hover {
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .create-playlist-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(26, 11, 46, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .image-upload {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .upload-placeholder svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        #playlistImage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        #createPlaylistForm .form-group {
+            margin-bottom: 20px;
+        }
+
+        #createPlaylistForm textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #createPlaylistForm textarea:focus {
+            outline: none;
+            border-color: #bfadea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-create {
+            background: linear-gradient(45deg, #bfadea, #8e7cc3);
+            color: #171320;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .playlist-item:hover {
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .playlist-thumb {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .playlist-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Delete playlist modal */
+        .delete-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .delete-confirm-content {
+            background: rgba(26, 11, 46, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .delete-confirm-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .playlist-item-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .delete-playlist-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s ease;
+        }
+
+        .delete-playlist-btn:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="/Screenshot_2025-05-24_7.38.35_PM-removebg-preview.png" alt="Luma Beats Logo" style="max-width: 150px; height: auto;">
             </div>
-            <div class="flex flex-col gap-4">
-              <button
-                x-data="{ isSignedIn: false }"
-                @click="isSignedIn = !isSignedIn"
-                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#bfadea] text-[#171320] text-sm font-bold leading-normal tracking-[0.015em]"
-              >
-                <span x-text="isSignedIn ? 'Sign Out' : 'Sign In'">Sign In</span>
-              </button>
-              <div class="flex flex-col gap-1">
-                <!-- Settings menu item -->
-                <div class="flex items-center gap-3 px-3 py-2 cursor-pointer">
-                  <div class="text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"></path>
-                    </svg>
-                  </div>
-                  <p class="text-white text-sm font-medium leading-normal">Settings</p>
+            
+            <nav>
+                <div class="nav-section">
+                    <a href="#" class="nav-item active">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <span>Discover</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <span>New Releases</span>
+                    </a>
                 </div>
-              </div>
-            </div>
-          </div>
+
+                <div class="section-title">YOUR MUSIC</div>
+                <div class="nav-section">
+                    <a href="#" class="nav-item">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <span>Saved Songs</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        <span>History</span>
+                    </a>
+                </div>
+
+                <div class="section-title">PLAYLISTS</div>
+                <div class="create-playlist">
+                    <button onclick="showCreatePlaylistModal()" class="create-playlist-btn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Create Playlist
+                    </button>
+                </div>
+                <div id="playlists-container">
+                    <!-- Playlists will be added here dynamically -->
+                </div>
+            </nav>
         </div>
 
         <!-- Main Content -->
-        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-          <div x-data="searchModule()">
-            <!-- Search input with Alpine.js reactivity -->
-            <div class="px-4 py-3">
-              <label class="flex flex-col min-w-40 h-12 w-full">
-                <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                  <div class="text-[#a69ac1] flex border-none bg-[#302942] items-center justify-center pl-4 rounded-l-xl border-r-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="search-bar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; opacity: 0.7;">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
                     </svg>
-                  </div>
-                  <input
-                    x-model="searchTerm"
-                    placeholder="Search for songs, artists, or albums"
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-[#302942] focus:border-none h-full placeholder:text-[#a69ac1] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                  />
+                    <input type="text" placeholder="Search">
                 </div>
-              </label>
+                <div class="auth-buttons">
+                    <div id="logged-out-buttons">
+                        <a href="register.html" class="btn btn-register">Register</a>
+                        <a href="login.html" class="btn btn-login">Login</a>
+                    </div>
+                    <div id="logged-in-buttons" style="display: none;">
+                        <button class="btn btn-account" onclick="toggleAccountMenu()">
+                            <img id="profile-picture" src="/user-default.png" alt="Profile" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px;">
+                            <span id="user-name">Account</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
 
-          <!-- Rest of the content remains the same -->
-          ...
+            <!-- New Releases Section -->
+            <div class="section-header">
+                <h2 class="section-title-main">New Releases</h2>
+                <a href="#" class="view-all">→</a>
+            </div>
+
+            <div class="album-grid">
+                <!-- Album grid content will be populated by JavaScript -->
+            </div>
+
+            <!-- Popular Tracks Section -->
+            <div class="popular-tracks">
+                <div class="section-header">
+                    <h2 class="section-title-main">Popular Tracks</h2>
+                    <a href="#" class="view-all">→</a>
+                </div>
+                <div class="track-list">
+                    <!-- Track items will be populated by JavaScript -->
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="loading-overlay">
+            <div class="loader"></div>
+        </div>
+
+        <!-- Music Player -->
+        <div class="music-player">
+            <div class="music-player-inner">
+                <div class="player-top-row">
+                    <div class="player-left">
+                        <div class="player-album-art">
+                            <img src="/Screenshot 2025-05-24 6.36.18 PM.png" alt="Album Art">
+                        </div>
+                        <div class="song-details">
+                            <div class="song-title">No Music Selected</div>
+                            <div class="song-artist"></div>
+                        </div>
+                    </div>
+                    <div class="player-center">
+                        <div class="player-controls">
+                            <button class="control-btn shuffle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn previous">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 20L9 12l10-8v16z"/>
+                                    <path d="M5 19V5"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn play-pause">
+                                <svg class="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 4H6v16h4V4zM18 4h-4v16h4V4z"/>
+                                </svg>
+                                <svg class="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M5 4l14 8-14 8V4z"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn next">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 4l10 8-10 8V4z"/>
+                                    <path d="M19 5v14"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn repeat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 2l4 4-4 4"/>
+                                    <path d="M3 11v-1a4 4 0 014-4h14"/>
+                                    <path d="M7 22l-4-4 4-4"/>
+                                    <path d="M21 13v1a4 4 0 01-4 4H3"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="progress-container">
+                            <div class="time current">0:00</div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%"></div>
+                                <div class="progress-handle"></div>
+                            </div>
+                            <div class="time total">0:00</div>
+                        </div>
+                    </div>
+                    <div class="player-right">
+                        <div class="volume-control">
+                            <button class="volume-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                    <path d="M15.54 8.46a5 5 0 010 7.07"/>
+                                    <path d="M19.07 4.93a10 10 0 010 14.14"/>
+                                </svg>
+                            </button>
+                            <div class="volume-slider">
+                                <div class="volume-progress" style="width: 100%"></div>
+                                <div class="volume-handle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- New YouTube Embed Section -->
+                <div class="youtube-embed-container" style="display: none;">
+                    <iframe 
+                        id="youtube-player" 
+                        width="320" 
+                        height="180" 
+                        src="" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen
+                    ></iframe>
+                    <button class="close-embed-btn">×</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account menu -->
+    <div id="account-menu" class="account-menu">
+        <div class="account-menu-header">
+            <h3>Account Settings</h3>
+            <button class="close-menu" onclick="toggleAccountMenu()">&times;</button>
+        </div>
+        <div class="account-menu-content">
+            <div class="profile-section">
+                <div class="profile-picture-container">
+                    <img id="menu-profile-picture" src="/user-default.png" alt="Profile">
+                    <button class="change-picture-btn" onclick="document.getElementById('profile-picture-input').click()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </button>
+                    <input type="file" id="profile-picture-input" accept="image/*" style="display: none;" onchange="handleProfilePictureChange(event)">
+                </div>
+            </div>
+            <div class="settings-section">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="first-name" placeholder="Enter first name">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="last-name" placeholder="Enter last name">
+                </div>
+                <div class="form-group">
+                    <label>Language</label>
+                    <select id="language">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="current-password" placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="new-password" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirm-new-password" placeholder="Confirm new password">
+                </div>
+                <button class="btn btn-save" onclick="saveAccountSettings()">Save Changes</button>
+                <button class="btn btn-delete-account" onclick="confirmDeleteAccount()">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="mobile-nav">
+        <a href="#" class="mobile-nav-item active">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <span>Discover</span>
+        </a>
+        <a href="#" class="mobile-nav-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span>New Releases</span>
+        </a>
+        <a href="#" class="mobile-nav-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Saved Songs</span>
+        </a>
+        <a href="#" class="mobile-nav-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12,6 12,12 16,14"/>
+            </svg>
+            <span>History</span>
+        </a>
     </div>
 
     <script>
-      function musicPlayer() {
-        return {
-          // Player state and methods
-        }
-      }
+        // YouTube Data API configuration
+        const YOUTUBE_API_KEY = 'AIzaSyDFko_ouqtmkabLfElMHTU_LAjD35EavUY';
+        const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/search';
 
-      function searchModule() {
-        return {
-          searchTerm: '',
-          // Search-related methods
+        // DOM elements
+        const searchInput = document.querySelector('.search-bar input');
+        const albumGrid = document.querySelector('.album-grid');
+        const songTitle = document.querySelector('.song-title');
+        const songArtist = document.querySelector('.song-artist');
+        const playerAlbumArt = document.querySelector('.player-album-art img');
+        const currentTimeDisplay = document.querySelector('.time.current');
+        const totalTimeDisplay = document.querySelector('.time.total');
+        const progressBar = document.querySelector('.progress-bar');
+        const progress = document.querySelector('.progress');
+        const progressHandle = document.querySelector('.progress-handle');
+
+        // Initialize default state
+        songTitle.textContent = 'No Music Selected';
+        songArtist.textContent = '';
+
+        function getSongHistory() {
+            const history = localStorage.getItem('songHistory');
+            return history ? JSON.parse(history) : [];
         }
-      }
+
+        function addToHistory(song) {
+            let history = getSongHistory();
+            
+            // Remove duplicates if song already exists
+            history = history.filter(item => item.videoId !== song.videoId);
+            
+            // Add new song to beginning of array
+            history.unshift({
+                videoId: song.videoId,
+                title: song.title,
+                artist: song.artist,
+                thumbnail: song.thumbnail,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep only last 50 songs
+            if (history.length > 50) {
+                history = history.slice(0, 50);
+            }
+            
+            localStorage.setItem('songHistory', JSON.stringify(history));
+            
+            // Update history UI if we're on the history page
+            updateHistoryUI();
+        }
+
+        function updateHistoryUI() {
+            const historySection = document.querySelector('.main-content');
+            const currentPage = document.querySelector('.nav-item.active').textContent.trim();
+            
+            if (currentPage === 'History') {
+                const history = getSongHistory();
+                
+                // Create history content
+                const historyContent = `
+                    <div class="section-header">
+                        <h2 class="section-title-main">Recently Played</h2>
+                    </div>
+                    <div class="album-grid">
+                        ${history.map(song => `
+                            <div class="album-card" onclick="playVideo('${song.videoId}', '${song.title}', '${song.artist}')">
+                                <div class="album-image">
+                                    <img src="${song.thumbnail}" alt="${song.title}">
+                                    <div class="play-button"></div>
+                                </div>
+                                <div class="album-info">
+                                    <div class="album-title">${song.title}</div>
+                                    <div class="album-artist">${song.artist}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                // Clear existing content and add history
+                historySection.innerHTML = historyContent;
+            }
+        }
+
+        function playVideo(videoId, title, artist) {
+            console.log(`Playing: ${title} by ${artist}`);
+            
+            const thumbnail = `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
+            
+            // Update the music player UI
+            playerAlbumArt.src = thumbnail;
+            songTitle.textContent = title;
+            songArtist.textContent = artist;
+            
+            // Add to history
+            addToHistory({
+                videoId,
+                title,
+                artist,
+                thumbnail
+            });
+            
+            // Show YouTube embed
+            const youtubePlayer = document.getElementById('youtube-player');
+            youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&enablejsapi=1`;
+            document.querySelector('.youtube-embed-container').style.display = 'block';
+            let isVideoPlaying = true;
+
+            // Update play/pause button
+            const pauseIcon = document.querySelector('.pause');
+            const playIcon = document.querySelector('.play');
+            pauseIcon.style.display = 'block';
+            playIcon.style.display = 'none';
+
+            // Add event listener to track video progress
+            window.addEventListener('message', handleYouTubePlayerMessage);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+
+        function handleYouTubePlayerMessage(event) {
+            if (event.data && typeof event.data === 'string') {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    // Video duration and current time
+                    if (data.event === 'onPlayerStateChange') {
+                        const youtubePlayer = document.getElementById('youtube-player');
+                        
+                        // Duration tracking
+                        youtubePlayer.contentWindow.postMessage('{"event":"command","func":"getDuration","args":""}', '*');
+                        youtubePlayer.contentWindow.postMessage('{"event":"command","func":"getCurrentTime","args":""}', '*');
+                    }
+
+                    // Handle different player states and timing
+                    if (data.info !== undefined) {
+                        switch(data.info) {
+                            case 0:  // Video ended
+                                if (!isLooping) {
+                                    resetPlayerState();
+                                }
+                                break;
+                            case 1:  // Playing
+                                startProgressTracking();
+                                break;
+                            case 2:  // Paused
+                                stopProgressTracking();
+                                break;
+                        }
+                    }
+
+                    // Duration and time updates
+                    if (data.duration !== undefined) {
+                        totalTimeDisplay.textContent = formatTime(data.duration);
+                    }
+
+                    if (data.currentTime !== undefined) {
+                        currentTimeDisplay.textContent = formatTime(data.currentTime);
+                        
+                        // Update progress bar
+                        const percentage = (data.currentTime / data.duration) * 100;
+                        progress.style.width = `${percentage}%`;
+                    }
+                } catch (e) {
+                    // Not a JSON message, ignore
+                }
+            }
+        }
+
+        let progressTrackingInterval;
+
+        function startProgressTracking() {
+            stopProgressTracking();
+            progressTrackingInterval = setInterval(() => {
+                const youtubePlayer = document.getElementById('youtube-player');
+                youtubePlayer.contentWindow.postMessage('{"event":"command","func":"getCurrentTime","args":""}', '*');
+            }, 1000);
+        }
+
+        function stopProgressTracking() {
+            clearInterval(progressTrackingInterval);
+        }
+
+        // Modify close embed button to reset player state
+        function resetPlayerState() {
+            songTitle.textContent = 'No Music Selected';
+            songArtist.textContent = '';
+            playerAlbumArt.src = ''; // Reset album art
+
+            const pauseIcon = document.querySelector('.pause');
+            const playIcon = document.querySelector('.play');
+            pauseIcon.style.display = 'none';
+            playIcon.style.display = 'block';
+
+            currentTimeDisplay.textContent = '0:00';
+            totalTimeDisplay.textContent = '0:00';
+            progress.style.width = '0%';
+
+            let isVideoPlaying = false;
+            let isLooping = false;
+        }
+
+        // Modify the play/pause logic for mobile
+        const playPauseBtn = document.querySelector('.play-pause');
+        let isVideoPlaying = false;
+
+        playPauseBtn.addEventListener('click', () => {
+            const youtubePlayer = document.getElementById('youtube-player');
+            const pauseIcon = document.querySelector('.pause');
+            const playIcon = document.querySelector('.play');
+
+            if (!youtubePlayer.src) return;
+
+            if (isVideoPlaying) {
+                youtubePlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                pauseIcon.style.display = 'none';
+                playIcon.style.display = 'block';
+                isVideoPlaying = false;
+            } else {
+                youtubePlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                pauseIcon.style.display = 'block';
+                playIcon.style.display = 'none';
+                isVideoPlaying = true;
+            }
+        });
+
+        // Previous and Next buttons for basic navigation
+        const previousBtn = document.querySelector('.previous');
+        const nextBtn = document.querySelector('.next');
+
+        previousBtn.addEventListener('click', () => {
+            // TODO: Implement previous track logic
+            console.log('Previous track');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            // TODO: Implement next track logic
+            console.log('Next track');
+        });
+
+        function getSavedSongs() {
+            const saved = localStorage.getItem('savedSongs');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function addToSavedSongs(song) {
+            let savedSongs = getSavedSongs();
+            if (!savedSongs.some(s => s.videoId === song.videoId)) {
+                savedSongs.push(song);
+                localStorage.setItem('savedSongs', JSON.stringify(savedSongs));
+            }
+        }
+
+        function showContextMenu(e, song) {
+            e.preventDefault();
+            
+            // Remove existing context menu if any
+            const existingMenu = document.querySelector('.context-menu');
+            if (existingMenu) existingMenu.remove();
+            
+            const contextMenu = document.createElement('div');
+            contextMenu.className = 'context-menu';
+            contextMenu.innerHTML = `
+                <div class="context-menu-item" onclick="handleSaveTrack('${song.videoId}', '${song.title}', '${song.artist}', '${song.img}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Add to Saved Songs
+                </div>
+                <div class="context-menu-item" onclick="handleShare('${song.videoId}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="5" r="3"/>
+                        <circle cx="6" cy="12" r="3"/>
+                        <circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                    </svg>
+                    Share
+                </div>
+                <div class="context-menu-item" onclick="handleCopyLink('${song.videoId}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0-7.54 0L12 5.67l-1.06-1.06a5 5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5 5 0 0 0 0-7.78z"/>
+                    </svg>
+                    Copy Link
+                </div>
+            `;
+            
+            contextMenu.style.top = `${e.pageY}px`;
+            contextMenu.style.left = `${e.pageX}px`;
+            
+            document.body.appendChild(contextMenu);
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', () => contextMenu.remove());
+        }
+
+        function handleSaveTrack(videoId, title, artist, img) {
+            addToSavedSongs({videoId, title, artist, img});
+            alert('Added to Saved Songs!');
+        }
+
+        function handleShare(videoId) {
+            const url = `https://youtu.be/${videoId}`;
+            
+            // Fallback sharing method
+            if (!navigator.share || navigator.share === undefined) {
+                // Copy to clipboard and show message
+                navigator.clipboard.writeText(url)
+                    .then(() => {
+                        // Create a temporary notification element
+                        const notification = document.createElement('div');
+                        notification.style.position = 'fixed';
+                        notification.style.bottom = '20px';
+                        notification.style.left = '50%';
+                        notification.style.transform = 'translateX(-50%)';
+                        notification.style.background = 'rgba(0,255,136,0.9)';
+                        notification.style.color = '#171320';
+                        notification.style.padding = '12px 20px';
+                        notification.style.borderRadius = '8px';
+                        notification.style.zIndex = '1100';
+                        notification.textContent = 'Song link copied to clipboard!';
+                        
+                        document.body.appendChild(notification);
+                        
+                        // Remove notification after 3 seconds
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 3000);
+                    })
+                    .catch(err => {
+                        console.error('Could not copy text: ', err);
+                    });
+            } else {
+                // Try native share if available
+                navigator.share({
+                    title: 'Check out this song!',
+                    text: 'Listen to this awesome track',
+                    url: url
+                }).catch(err => {
+                    // If share fails, fall back to clipboard copy
+                    navigator.clipboard.writeText(url)
+                        .then(() => alert('Could not share. Link copied to clipboard.'));
+                });
+            }
+        }
+
+        function handleCopyLink(videoId) {
+            const url = `https://youtu.be/${videoId}`;
+            navigator.clipboard.writeText(url)
+                .then(() => alert('Link copied to clipboard!'));
+        }
+
+        function generateAlbumGrid() {
+            const albums = [
+                { img: '/album1.png', title: 'Demonios de Blanco', artist: 'Versión Prohibida', videoId: 'dQw4w9WgXcQ' },
+                { img: '/album2.png', title: 'Debí TIRAR MÁS FOTOS - DISCO TRoPICAL MIX', artist: 'Cielo Roto', videoId: '8PM5tJoWuYw' },
+                { img: '/album3.png', title: 'BAILE iNoLVIDABLE', artist: 'Cielo Roto', videoId: '5qap5aO4i9A' },
+                { img: '/album4.png', title: 'The Ride: Stories from 503', artist: 'Riffboys', videoId: 'jfKfPfyJRdk' },
+                { img: '/album5.png', title: 'We Vibe', artist: 'Dray Flowers', videoId: '36YnV9STBqc' },
+                { img: '/album6.png', title: 'Fish & Tits', artist: 'The Good Dog', videoId: '21qNxnCS8WU' },
+                { img: '/album7.png', title: 'The Thief of Time', artist: 'The Good Dog', videoId: 'rVeMiVU77wo' },
+                { img: '/album8.png', title: 'Liquid Flow', artist: 'Lara Chrome', videoId: 'wJGcwEv7838' },
+                { img: '/album9.png', title: 'Midnight Dreams', artist: 'Luna Wave', videoId: 'n61ULEU7CO0' },
+                { img: '/album10.png', title: 'Electric Soul', artist: 'Neon Pulse', videoId: 'VVkGYkn4yZo' },
+                { img: '/album11.png', title: 'Ocean Breeze', artist: 'Coastal Rhythms', videoId: 'QGJuMBdaqIw' },
+                { img: '/album12.png', title: 'Urban Nights', artist: 'City Lights', videoId: 'HV7DtH3J0Ws' }
+            ];
+
+            return albums.map(album => `
+                <div class="album-card" 
+                    onclick="playVideo('${album.videoId}', '${album.title}', '${album.artist}')"
+                    oncontextmenu="showContextMenu(event, {videoId: '${album.videoId}', title: '${album.title}', artist: '${album.artist}', img: '${album.img}'}); return false;">
+                    <div class="album-image">
+                        <img src="${album.img}" alt="${album.title}">
+                        <div class="play-button"></div>
+                    </div>
+                    <div class="album-info">
+                        <div class="album-title">${album.title}</div>
+                        <div class="album-artist">${album.artist}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generatePopularTracks() {
+            const tracks = [
+                { number: 1, title: "Havana", artist: "Camila Cabello", duration: "3:37", videoId: "HCjNJDNzw8Y", img: "/album1.png" },
+                { number: 2, title: "Blinding Lights", artist: "The Weeknd", duration: "3:20", videoId: "4NRXx6U8ABQ", img: "/album2.png" },
+                { number: 3, title: "Stay With Me", artist: "Sam Smith", duration: "2:52", videoId: "pB-5XG-DbAA", img: "/album3.png" },
+                { number: 4, title: "Shape of You", artist: "Ed Sheeran", duration: "3:53", videoId: "JGwWNGJdvx8", img: "/album4.png" },
+                { number: 5, title: "Bad Guy", artist: "Billie Eilish", duration: "3:14", videoId: "DyDfgMOUjCI", img: "/album5.png" },
+                { number: 6, title: "Uptown Funk", artist: "Mark Ronson ft. Bruno Mars", duration: "4:30", videoId: "OPf0YbXqDm0", img: "/album6.png" },
+                { number: 7, title: "Believer", artist: "Imagine Dragons", duration: "3:24", videoId: "7wtfhZwyrcc", img: "/album7.png" },
+                { number: 8, title: "Dance Monkey", artist: "Tones and I", duration: "3:29", videoId: "q0hyYWKXF0Q", img: "/album8.png" },
+                { number: 9, title: "Someone You Loved", artist: "Lewis Capaldi", duration: "3:02", videoId: "bCuhuePlP8o", img: "/album9.png" },
+                { number: 10, title: "Don't Start Now", artist: "Dua Lipa", duration: "3:03", videoId: "oygrmJFKYZY", img: "/album10.png" }
+            ];
+
+            const trackList = document.querySelector('.track-list');
+            trackList.innerHTML = tracks.map(track => `
+                <div class="track-item" onclick="playVideo('${track.videoId}', '${track.title}', '${track.artist}')" 
+                     oncontextmenu="showContextMenu(event, {videoId: '${track.videoId}', title: '${track.title}', artist: '${track.artist}', img: '${track.img}'}); return false;">
+                    <div class="track-number">${track.number}</div>
+                    <div class="track-info">
+                        <div class="track-thumbnail">
+                            <img src="${track.img}" alt="${track.title}">
+                        </div>
+                        <div class="track-title-artist">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">${track.artist}</div>
+                        </div>
+                    </div>
+                    <div class="track-duration">${track.duration}</div>
+                    <div class="track-action">
+                        <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleNavigation(section) {
+            // Update active state for sidebar and mobile nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Find and activate the clicked nav items
+            const sidebarItem = Array.from(document.querySelectorAll('.nav-item'))
+                .find(item => item.textContent.trim() === section);
+            const mobileItem = Array.from(document.querySelectorAll('.mobile-nav-item'))
+                .find(item => item.textContent.trim() === section);
+
+            if (sidebarItem) sidebarItem.classList.add('active');
+            if (mobileItem) mobileItem.classList.add('active');
+
+            // Handle content updates based on section
+            const mainContent = document.querySelector('.main-content');
+            
+            switch(section) {
+                case 'Discover':
+                    mainContent.innerHTML = `
+                        <div class="section-header">
+                            <h2 class="section-title-main">New Releases</h2>
+                            <a href="#" class="view-all">→</a>
+                        </div>
+                        <div class="album-grid">
+                            ${generateAlbumGrid()}
+                        </div>
+                        <div class="popular-tracks">
+                            <div class="section-header">
+                                <h2 class="section-title-main">Popular Tracks</h2>
+                                <a href="#" class="view-all">→</a>
+                            </div>
+                            <div class="track-list"></div>
+                        </div>
+                    `;
+                    generatePopularTracks();
+                    break;
+                case 'History':
+                    updateHistoryUI();
+                    break;
+                case 'Genres':
+                    mainContent.innerHTML = `
+                        <div class="section-header">
+                            <h2 class="section-title-main">Music Genres</h2>
+                        </div>
+                        <div class="album-grid">
+                            <!-- Add your genres content here -->
+                        </div>
+                    `;
+                    break;
+                case 'Saved Songs':
+                    const savedSongs = getSavedSongs();
+                    mainContent.innerHTML = `
+                        <div class="section-header">
+                            <h2 class="section-title-main">Saved Songs</h2>
+                        </div>
+                        <div class="album-grid">
+                            ${savedSongs.map(song => `
+                                <div class="album-card" 
+                                    onclick="playVideo('${song.videoId}', '${song.title}', '${song.artist}')"
+                                    oncontextmenu="showContextMenu(event, {videoId: '${song.videoId}', title: '${song.title}', artist: '${song.artist}', img: '${song.img}'}); return false;">
+                                    <div class="album-image">
+                                        <img src="${song.img}" alt="${song.title}">
+                                        <div class="play-button"></div>
+                                    </div>
+                                    <div class="album-info">
+                                        <div class="album-title">${song.title}</div>
+                                        <div class="album-artist">${song.artist}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function performSearch(query) {
+            query = query.toLowerCase().trim();
+            
+            // Search in albums
+            const albums = document.querySelectorAll('.album-card');
+            const trackList = document.querySelector('.track-list');
+            const tracks = trackList ? trackList.querySelectorAll('.track-item') : [];
+            
+            let foundResults = false;
+            
+            // Filter albums
+            albums.forEach(album => {
+                const title = album.querySelector('.album-title').textContent.toLowerCase();
+                const artist = album.querySelector('.album-artist').textContent.toLowerCase();
+                
+                if (title.includes(query) || artist.includes(query)) {
+                    album.style.display = 'block';
+                    foundResults = true;
+                } else {
+                    album.style.display = 'none';
+                }
+            });
+            
+            // Filter tracks
+            tracks.forEach(track => {
+                const title = track.querySelector('.track-title').textContent.toLowerCase();
+                const artist = track.querySelector('.track-artist').textContent.toLowerCase();
+                
+                if (title.includes(query) || artist.includes(query)) {
+                    track.style.display = 'grid';
+                    foundResults = true;
+                } else {
+                    track.style.display = 'none';
+                }
+            });
+            
+            // Show/hide results message
+            const mainContent = document.querySelector('.main-content');
+            let noResultsMessage = mainContent.querySelector('.no-results');
+            
+            if (!foundResults) {
+                if (!noResultsMessage) {
+                    noResultsMessage = document.createElement('div');
+                    noResultsMessage.classList.add('no-results');
+                    noResultsMessage.style.textAlign = 'center';
+                    noResultsMessage.style.color = 'rgba(255,255,255,0.6)';
+                    noResultsMessage.style.padding = '20px';
+                    noResultsMessage.innerHTML = `
+                        <h3>No results found</h3>
+                        <p>Try searching for a different song, artist, or album</p>
+                    `;
+                    mainContent.insertBefore(noResultsMessage, mainContent.firstChild);
+                }
+                noResultsMessage.style.display = 'block';
+            } else if (noResultsMessage) {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generate album grid
+            const albumGrid = document.querySelector('.album-grid');
+            if (albumGrid) {
+                albumGrid.innerHTML = generateAlbumGrid();
+            }
+
+            generatePopularTracks();
+            // Add click handlers to all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = item.textContent.trim();
+                    handleNavigation(section);
+                });
+            });
+
+            // Add click handlers to all mobile nav items
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = item.textContent.trim();
+                    handleNavigation(section);
+                });
+            });
+
+            const searchInput = document.querySelector('.search-bar input');
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
+            });
+        });
+
+        function showCreatePlaylistModal() {
+            document.getElementById('createPlaylistModal').style.display = 'block';
+        }
+
+        function hideCreatePlaylistModal() {
+            document.getElementById('createPlaylistModal').style.display = 'none';
+            document.getElementById('createPlaylistForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.querySelector('.upload-placeholder').style.display = 'flex';
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.querySelector('.upload-placeholder').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleCreatePlaylist(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('playlistName').value;
+            const description = document.getElementById('playlistDescription').value;
+            const imageFile = document.getElementById('playlistImage').files[0];
+            
+            // Get existing playlists or initialize empty array
+            let playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+            
+            // Create new playlist object
+            const newPlaylist = {
+                id: Date.now(),
+                name,
+                description,
+                songs: [],
+                image: imageFile ? URL.createObjectURL(imageFile) : '/album1.png' // Default image if none selected
+            };
+            
+            // Add to playlists array
+            playlists.push(newPlaylist);
+            
+            // Save to localStorage
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+            
+            // Update UI
+            updatePlaylistsUI();
+            
+            // Hide modal and reset form
+            hideCreatePlaylistModal();
+        }
+
+        function updatePlaylistsUI() {
+            const playlistsContainer = document.getElementById('playlists-container');
+            const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+            
+            playlistsContainer.innerHTML = playlists.map(playlist => `
+                <div class="playlist-item-container">
+                    <div class="playlist-item" onclick="openPlaylist(${playlist.id})">
+                        <div class="playlist-thumb">
+                            <img src="${playlist.image}" alt="${playlist.name}">
+                        </div>
+                        <span>${playlist.name}</span>
+                    </div>
+                    <button class="delete-playlist-btn" onclick="confirmDeletePlaylist(${playlist.id}, event)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; color: red;">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function confirmDeletePlaylist(playlistId, event) {
+            event.stopPropagation(); // Prevent opening the playlist
+            
+            // Create a modal for confirmation
+            const modal = document.createElement('div');
+            modal.classList.add('delete-confirm-modal');
+            modal.innerHTML = `
+                <div class="delete-confirm-content">
+                    <h3>Delete Playlist</h3>
+                    <p>Are you sure you want to delete this playlist?</p>
+                    <div class="delete-confirm-buttons">
+                        <button class="btn btn-cancel">Cancel</button>
+                        <button class="btn btn-delete">Delete</button>
+                    </div>
+                </div>
+            `;
+            
+            // Style the modal
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '2000';
+            
+            const modalContent = modal.querySelector('.delete-confirm-content');
+            modalContent.style.background = 'rgba(26, 11, 46, 0.95)';
+            modalContent.style.padding = '30px';
+            modalContent.style.borderRadius = '15px';
+            modalContent.style.textAlign = 'center';
+            modalContent.style.maxWidth = '400px';
+            modalContent.style.width = '90%';
+            
+            const buttons = modalContent.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.style.padding = '10px 20px';
+                btn.style.margin = '10px';
+                btn.style.borderRadius = '8px';
+                btn.style.cursor = 'pointer';
+            });
+            
+            const cancelBtn = modal.querySelector('.btn-cancel');
+            cancelBtn.style.background = 'transparent';
+            cancelBtn.style.color = 'white';
+            cancelBtn.style.border = '1px solid rgba(255,255,255,0.3)';
+            
+            const deleteBtn = modal.querySelector('.btn-delete');
+            deleteBtn.style.background = 'linear-gradient(45deg, red, darkred)';
+            deleteBtn.style.color = 'white';
+            deleteBtn.style.border = 'none';
+            
+            // Cancel button logic
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Delete button logic
+            deleteBtn.addEventListener('click', () => {
+                // Remove playlist from localStorage
+                let playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+                playlists = playlists.filter(p => p.id !== playlistId);
+                localStorage.setItem('playlists', JSON.stringify(playlists));
+                
+                // Update UI
+                updatePlaylistsUI();
+                
+                // Remove modal
+                document.body.removeChild(modal);
+            });
+            
+            // Add to body
+            document.body.appendChild(modal);
+        }
+
+        // Add style to playlist container
+        const styleEl = document.createElement('style');
+        styleEl.textContent = `
+            .playlist-item-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .delete-playlist-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 5px;
+                transition: transform 0.2s ease;
+            }
+            
+            .delete-playlist-btn:hover {
+                transform: scale(1.2);
+            }
+        `;
+        document.head.appendChild(styleEl);
+
+        function openPlaylist(playlistId) {
+            const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+            const playlist = playlists.find(p => p.id === playlistId);
+            
+            if (playlist) {
+                // Update main content to show playlist
+                const mainContent = document.querySelector('.main-content');
+                mainContent.innerHTML = `
+                    <div class="section-header">
+                        <h2 class="section-title-main">${playlist.name}</h2>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">${playlist.description}</p>
+                    <div class="track-list">
+                        ${playlist.songs.length ? 
+                            playlist.songs.map((song, index) => `
+                                <div class="track-item" onclick="playVideo('${song.videoId}', '${song.title}', '${song.artist}')">
+                                    <div class="track-number">${index + 1}</div>
+                                    <div class="track-info">
+                                        <div class="track-thumbnail">
+                                            <img src="${song.img}" alt="${song.title}">
+                                        </div>
+                                        <div class="track-title-artist">
+                                            <div class="track-title">${song.title}</div>
+                                            <div class="track-artist">${song.artist}</div>
+                                        </div>
+                                    </div>
+                                    <div class="track-duration">${song.duration || '0:00'}</div>
+                                </div>
+                            `).join('') :
+                            '<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">No songs in this playlist yet</div>'
+                        }
+                    </div>
+                `;
+            }
+        }
+
+        // Add these functions to handle account functionality
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            document.getElementById('logged-out-buttons').style.display = isLoggedIn ? 'none' : 'flex';
+            document.getElementById('logged-in-buttons').style.display = isLoggedIn ? 'flex' : 'none';
+            
+            if (isLoggedIn && userData) {
+                document.getElementById('user-name').textContent = userData.firstName || 'Account';
+                if (userData.profilePicture) {
+                    document.getElementById('profile-picture').src = userData.profilePicture;
+                    document.getElementById('menu-profile-picture').src = userData.profilePicture;
+                }
+            }
+        }
+
+        function toggleAccountMenu() {
+            const menu = document.getElementById('account-menu');
+            menu.classList.toggle('active');
+        }
+
+        function handleProfilePictureChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profilePicture = e.target.result;
+                    document.getElementById('profile-picture').src = profilePicture;
+                    document.getElementById('menu-profile-picture').src = profilePicture;
+                    
+                    // Save to localStorage
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    userData.profilePicture = profilePicture;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveAccountSettings() {
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const language = document.getElementById('language').value;
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+            // Validate password change if attempted
+            if (newPassword) {
+                if (newPassword !== confirmNewPassword) {
+                    alert('New passwords do not match!');
+                    return;
+                }
+                // Here you would typically verify the current password with the backend
+            }
+
+            // Save user data
+            const userData = {
+                firstName,
+                lastName,
+                language,
+                profilePicture: document.getElementById('menu-profile-picture').src
+            };
+            localStorage.setItem('userData', JSON.stringify(userData));
+
+            // Update display
+            document.getElementById('user-name').textContent = firstName || 'Account';
+            
+            alert('Settings saved successfully!');
+            toggleAccountMenu();
+        }
+
+        function confirmDeleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                // Here you would typically make an API call to delete the account
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
     </script>
-  </body>
+
+    <!-- Create playlist modal -->
+    <div id="createPlaylistModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Playlist</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="createPlaylistForm" onsubmit="handleCreatePlaylist(event)">
+                <div class="form-group">
+                    <label for="playlistName">Playlist Name</label>
+                    <input type="text" id="playlistName" required>
+                </div>
+                <div class="form-group">
+                    <label for="playlistDescription">Description</label>
+                    <textarea id="playlistDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="playlistImage">Cover Image</label>
+                    <div class="image-upload">
+                        <input type="file" id="playlistImage" accept="image/*" onchange="previewImage(event)">
+                        <div class="image-preview">
+                            <img id="imagePreview" src="#" alt="Preview">
+                            <div class="upload-placeholder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <span>Choose an image</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-create">Create Playlist</button>
+            </form>
+        </div>
+    </div>
+</body>
 </html>
