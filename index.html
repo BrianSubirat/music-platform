@@ -1217,6 +1217,81 @@
         .delete-playlist-btn:hover {
             transform: scale(1.2);
         }
+
+        /* Add new styles for fullscreen mobile player */
+        .mobile-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a0b2e 0%, #16213e 100%);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .mobile-player.active {
+            display: flex;
+        }
+
+        .mobile-player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .mobile-player-back {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .mobile-player-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .mobile-player-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .mobile-player-artist {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .mobile-youtube-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .mobile-youtube-container iframe {
+            max-width: 100%;
+            max-height: 50vh;
+            border-radius: 12px;
+        }
+
+        .mobile-player-controls {
+            margin-top: auto;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .youtube-embed-container {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1322,6 +1397,52 @@
                     <!-- Track items will be populated by JavaScript -->
                 </div>
             </div>
+
+            <!-- Add new Artists Section -->
+            <div class="popular-artists" style="margin-top: 40px; margin-bottom: 40px;">
+                <div class="section-header">
+                    <h2 class="section-title-main">Popular Artists</h2>
+                    <a href="#" class="view-all">→</a>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px 0;">
+                    <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/EdSheeran', '_blank')">
+                        <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                            <img src="https://yt3.googleusercontent.com/n5DRh94eycw6xGcOKTn6LKQwztTwaw24fW3qXoCT_qysXM3E20TgwNLJ0J1sUWBib1TwY8-X=s800-c-k-c0x00ffffff-no-rj" 
+                                 alt="Ed Sheeran" 
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">Ed Sheeran</div>
+                        <div style="color: rgba(255,255,255,0.6); font-size: 14px;">16.2M followers</div>
+                    </div>
+                    <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/channel/UCZFWPqqPkFlNwIxcpsLOwew', '_blank')">
+                        <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                            <img src="https://yt3.googleusercontent.com/y_esGAQOhX4rTpWvrALErAJlFbm_2TIVjQWaiXq_KMl6bQkJqBZdqHQZWPkGOBjT-0LcOgTWvA=s800-c-k-c0x00ffffff-no-rj" 
+                                 alt="Billie Eilish" 
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">Billie Eilish</div>
+                        <div style="color: rgba(255,255,255,0.6); font-size: 14px;">12.8M followers</div>
+                    </div>
+                    <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/TheWeeknd', '_blank')">
+                        <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                            <img src="https://yt3.googleusercontent.com/QiI-c4cFyRPD6TV8KNMsXQYzqQPQjk8ZlL6gkfsqPVd0DVxNmL5_WYBTZZrqT3JEvJ_bhM5Q=s800-c-k-c0x00ffffff-no-rj" 
+                                 alt="The Weeknd" 
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">The Weeknd</div>
+                        <div style="color: rgba(255,255,255,0.6); font-size: 14px;">14.5M followers</div>
+                    </div>
+                    <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/DuaLipa', '_blank')">
+                        <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                            <img src="https://yt3.googleusercontent.com/ytc/AIf8zZTUVa5AyXO8-SFO1PxMmrXkgQmQoJGZrGE8Ee9C=s800-c-k-c0x00ffffff-no-rj" 
+                                 alt="Dua Lipa" 
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">Dua Lipa</div>
+                        <div style="color: rgba(255,255,255,0.6); font-size: 14px;">11.7M followers</div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="loading-overlay">
             <div class="loader"></div>
@@ -1389,7 +1510,7 @@
                         <div class="volume-control">
                             <button class="volume-btn">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                    <path d="M11 5L6 9H2v6h4l5 5V5z"/>
                                     <path d="M15.54 8.46a5 5 0 010 7.07"/>
                                     <path d="M19.07 4.93a10 10 0 010 14.14"/>
                                 </svg>
@@ -1527,6 +1648,8 @@
         songTitle.textContent = 'No Music Selected';
         songArtist.textContent = '';
 
+        let isVideoPlaying = false;
+
         function getSongHistory() {
             const history = localStorage.getItem('songHistory');
             return history ? JSON.parse(history) : [];
@@ -1609,11 +1732,25 @@
                 thumbnail
             });
             
-            // Show YouTube embed
-            const youtubePlayer = document.getElementById('youtube-player');
-            youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&enablejsapi=1`;
-            document.querySelector('.youtube-embed-container').style.display = 'block';
-            let isVideoPlaying = true;
+            if (window.innerWidth <= 768) {
+                // Mobile view
+                const mobilePlayer = document.querySelector('.mobile-player');
+                const mobileTitle = document.querySelector('.mobile-player-title');
+                const mobileArtist = document.querySelector('.mobile-player-artist');
+                const mobileYoutubePlayer = document.getElementById('mobile-youtube-player');
+
+                mobileTitle.textContent = title;
+                mobileArtist.textContent = artist;
+                mobileYoutubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&enablejsapi=1`;
+                
+                mobilePlayer.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Desktop view
+                const youtubePlayer = document.getElementById('youtube-player');
+                youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&enablejsapi=1`;
+                document.querySelector('.youtube-embed-container').style.display = 'block';
+            }
 
             // Update play/pause button
             const pauseIcon = document.querySelector('.pause');
@@ -1621,135 +1758,17 @@
             pauseIcon.style.display = 'block';
             playIcon.style.display = 'none';
 
-            // Add event listener to track video progress
-            window.addEventListener('message', handleYouTubePlayerMessage);
+            isVideoPlaying = true;
         }
 
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        function closeMobilePlayer() {
+            const mobilePlayer = document.querySelector('.mobile-player');
+            const mobileYoutubePlayer = document.getElementById('mobile-youtube-player');
+            
+            mobilePlayer.classList.remove('active');
+            mobileYoutubePlayer.src = '';
+            document.body.style.overflow = '';
         }
-
-        function handleYouTubePlayerMessage(event) {
-            if (event.data && typeof event.data === 'string') {
-                try {
-                    const data = JSON.parse(event.data);
-                    
-                    // Video duration and current time
-                    if (data.event === 'onPlayerStateChange') {
-                        const youtubePlayer = document.getElementById('youtube-player');
-                        
-                        // Duration tracking
-                        youtubePlayer.contentWindow.postMessage('{"event":"command","func":"getDuration","args":""}', '*');
-                        youtubePlayer.contentWindow.postMessage('{"event":"command","func":"getCurrentTime","args":""}', '*');
-                    }
-
-                    // Handle different player states and timing
-                    if (data.info !== undefined) {
-                        switch(data.info) {
-                            case 0:  // Video ended
-                                if (!isLooping) {
-                                    resetPlayerState();
-                                }
-                                break;
-                            case 1:  // Playing
-                                startProgressTracking();
-                                break;
-                            case 2:  // Paused
-                                stopProgressTracking();
-                                break;
-                        }
-                    }
-
-                    // Duration and time updates
-                    if (data.duration !== undefined) {
-                        totalTimeDisplay.textContent = formatTime(data.duration);
-                    }
-
-                    if (data.currentTime !== undefined) {
-                        currentTimeDisplay.textContent = formatTime(data.currentTime);
-                        
-                        // Update progress bar
-                        const percentage = (data.currentTime / data.duration) * 100;
-                        progress.style.width = `${percentage}%`;
-                    }
-                } catch (e) {
-                    // Not a JSON message, ignore
-                }
-            }
-        }
-
-        let progressTrackingInterval;
-
-        function startProgressTracking() {
-            stopProgressTracking();
-            progressTrackingInterval = setInterval(() => {
-                const youtubePlayer = document.getElementById('youtube-player');
-                youtubePlayer.contentWindow.postMessage('{"event":"command","func":"getCurrentTime","args":""}', '*');
-            }, 1000);
-        }
-
-        function stopProgressTracking() {
-            clearInterval(progressTrackingInterval);
-        }
-
-        // Modify close embed button to reset player state
-        function resetPlayerState() {
-            songTitle.textContent = 'No Music Selected';
-            songArtist.textContent = '';
-            playerAlbumArt.src = ''; // Reset album art
-
-            const pauseIcon = document.querySelector('.pause');
-            const playIcon = document.querySelector('.play');
-            pauseIcon.style.display = 'none';
-            playIcon.style.display = 'block';
-
-            currentTimeDisplay.textContent = '0:00';
-            totalTimeDisplay.textContent = '0:00';
-            progress.style.width = '0%';
-
-            let isVideoPlaying = false;
-            let isLooping = false;
-        }
-
-        // Modify the play/pause logic for mobile
-        const playPauseBtn = document.querySelector('.play-pause');
-        let isVideoPlaying = false;
-
-        playPauseBtn.addEventListener('click', () => {
-            const youtubePlayer = document.getElementById('youtube-player');
-            const pauseIcon = document.querySelector('.pause');
-            const playIcon = document.querySelector('.play');
-
-            if (!youtubePlayer.src) return;
-
-            if (isVideoPlaying) {
-                youtubePlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                pauseIcon.style.display = 'none';
-                playIcon.style.display = 'block';
-                isVideoPlaying = false;
-            } else {
-                youtubePlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                pauseIcon.style.display = 'block';
-                playIcon.style.display = 'none';
-                isVideoPlaying = true;
-            }
-        });
-
-        // Previous and Next buttons for basic navigation
-        const previousBtn = document.querySelector('.previous');
-        const nextBtn = document.querySelector('.next');
-
-        previousBtn.addEventListener('click', () => {
-            // TODO: Implement previous track logic
-            console.log('Previous track');
-        });
-
-        nextBtn.addEventListener('click', () => {
-            // TODO: Implement next track logic
-            console.log('Next track');
-        });
 
         function getSavedSongs() {
             const saved = localStorage.getItem('savedSongs');
@@ -2261,29 +2280,6 @@
             document.body.appendChild(modal);
         }
 
-        // Add style to playlist container
-        const styleEl = document.createElement('style');
-        styleEl.textContent = `
-            .playlist-item-container {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .delete-playlist-btn {
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 5px;
-                transition: transform 0.2s ease;
-            }
-            
-            .delete-playlist-btn:hover {
-                transform: scale(1.2);
-            }
-        `;
-        document.head.appendChild(styleEl);
-
         function openPlaylist(playlistId) {
             const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
             const playlist = playlists.find(p => p.id === playlistId);
@@ -2406,7 +2402,160 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
         });
+
+        // Modify the search functionality to use YouTube API
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchYouTube(e.target.value);
+            }, 500);
+        });
+
+        async function searchYouTube(query) {
+            if (!query) {
+                // Reset to default content if search is empty
+                generateAlbumGrid();
+                generatePopularTracks();
+                return;
+            }
+
+            try {
+                // First search for songs/videos
+                const videoResponse = await fetch(`${YOUTUBE_API_URL}?part=snippet&maxResults=10&q=${encodeURIComponent(query + ' music')}&type=video&key=${YOUTUBE_API_KEY}`);
+                const videoData = await videoResponse.json();
+                
+                // Then search for music channels/artists
+                const channelResponse = await fetch(`${YOUTUBE_API_URL}?part=snippet&maxResults=5&q=${encodeURIComponent(query + ' music artist channel')}&type=channel&key=${YOUTUBE_API_KEY}`);
+                const channelData = await channelResponse.json();
+                
+                // Update the results with both songs and artists
+                updateSearchResults(videoData.items, channelData.items);
+            } catch (error) {
+                console.error('YouTube search error:', error);
+            }
+        }
+
+        function updateSearchResults(videoItems, channelItems) {
+            const mainContent = document.querySelector('.main-content');
+            mainContent.innerHTML = `
+                <div class="section-header">
+                    <h2 class="section-title-main">Search Results</h2>
+                </div>
+                <div class="track-list">
+                    ${videoItems.map((item, index) => `
+                        <div class="track-item" onclick="playVideo('${item.id.videoId}', '${escapeHtml(item.snippet.title)}', '${escapeHtml(item.snippet.channelTitle)}')">
+                            <div class="track-number">${index + 1}</div>
+                            <div class="track-info">
+                                <div class="track-thumbnail">
+                                    <img src="${item.snippet.thumbnails.default.url}" alt="${escapeHtml(item.snippet.title)}">
+                                </div>
+                                <div class="track-title-artist">
+                                    <div class="track-title">${escapeHtml(item.snippet.title)}</div>
+                                    <div class="track-artist">${escapeHtml(item.snippet.channelTitle)}</div>
+                                </div>
+                            </div>
+                            <div class="track-action">
+                                <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                ${channelItems.length > 0 ? `
+                    <div class="section-header" style="margin-top: 40px;">
+                        <h2 class="section-title-main">Artists</h2>
+                    </div>
+                    <div style="display: flex; gap: 20px; overflow-x: auto; padding: 20px 0;">
+                        ${channelItems.map(channel => `
+                            <div class="artist-card" style="min-width: 200px; text-align: center; cursor: pointer;" 
+                                 onclick="window.open('https://www.youtube.com/channel/${channel.id.channelId}', '_blank')">
+                                <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                                    <img src="${channel.snippet.thumbnails.medium.url}" 
+                                         alt="${escapeHtml(channel.snippet.title)}" 
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="font-weight: 600; margin-bottom: 5px;">${escapeHtml(channel.snippet.title)}</div>
+                                <div style="color: rgba(255,255,255,0.6); font-size: 14px;">Artist</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
     </script>
+
+    <!-- Mobile player HTML before closing body tag -->
+    <div class="mobile-player">
+        <div class="mobile-player-header">
+            <button class="mobile-player-back" onclick="closeMobilePlayer()">↓</button>
+            <div class="mobile-player-info">
+                <div class="mobile-player-title">No song selected</div>
+                <div class="mobile-player-artist"></div>
+            </div>
+            <div style="width: 40px"></div>
+        </div>
+        <div class="mobile-youtube-container">
+            <iframe id="mobile-youtube-player" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="mobile-player-controls">
+            <!-- Reuse existing player controls -->
+            <div class="player-controls">
+                <button class="control-btn shuffle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                    </svg>
+                </button>
+                <button class="control-btn previous">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 20L9 12l10-8v16z"/>
+                        <path d="M5 19V5"/>
+                    </svg>
+                </button>
+                <button class="control-btn play-pause">
+                    <svg class="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 4H6v16h4V4zM18 4h-4v16h4V4z"/>
+                    </svg>
+                    <svg class="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                        <path d="M5 4l14 8-14 8V4z"/>
+                    </svg>
+                </button>
+                <button class="control-btn next">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 4l10 8-10 8V4z"/>
+                        <path d="M19 5v14"/>
+                    </svg>
+                </button>
+                <button class="control-btn repeat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 2l4 4-4 4"/>
+                        <path d="M3 11v-1a4 4 0 014-4h14"/>
+                        <path d="M7 22l-4-4 4-4"/>
+                        <path d="M21 13v1a4 4 0 01-4 4H3"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-container">
+                <div class="time current">0:00</div>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 0%"></div>
+                    <div class="progress-handle"></div>
+                </div>
+                <div class="time total">0:00</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Create playlist modal -->
     <div id="createPlaylistModal" class="modal">
