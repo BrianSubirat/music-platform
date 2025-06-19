@@ -1650,6 +1650,8 @@
         songArtist.textContent = '';
 
         let isVideoPlaying = false;
+        let currentPlayer = null;
+        let isSearchActive = false;
 
         function getSongHistory() {
             const history = localStorage.getItem('songHistory');
@@ -1746,11 +1748,13 @@
                 
                 mobilePlayer.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                currentPlayer = 'mobile';
             } else {
                 // Desktop view
                 const youtubePlayer = document.getElementById('youtube-player');
                 youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&enablejsapi=1`;
                 document.querySelector('.youtube-embed-container').style.display = 'block';
+                currentPlayer = 'desktop';
             }
 
             // Update play/pause button
@@ -1769,6 +1773,12 @@
             mobilePlayer.classList.remove('active');
             mobileYoutubePlayer.src = '';
             document.body.style.overflow = '';
+            currentPlayer = null;
+            
+            // Reset player info
+            songTitle.textContent = 'No Music Selected';
+            songArtist.textContent = '';
+            playerAlbumArt.src = '/Screenshot 2025-05-24 6.36.18 PM.png';
         }
 
         function getSavedSongs() {
@@ -1812,7 +1822,7 @@
                 </div>
                 <div class="context-menu-item" onclick="handleCopyLink('${song.videoId}')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M10 13a5 5 0 0 0-7.54 0L12 5.67l-1.06-1.06a5 5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5 5 0 0 0 0-7.78z"/>
+                        <path d="M10 13a5 5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5 5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5 5 0 0 0 0-7.78z"/>
                     </svg>
                     Copy Link
                 </div>
@@ -1943,7 +1953,7 @@
                             <div class="track-artist">${track.artist}</div>
                         </div>
                     </div>
-                    <div class="track-duration">${track.duration}</div>
+                    <div class="track-duration">${track.duration || '0:00'}</div>
                     <div class="track-action">
                         <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -1971,6 +1981,10 @@
             if (sidebarItem) sidebarItem.classList.add('active');
             if (mobileItem) mobileItem.classList.add('active');
 
+            // Clear search and reset flag
+            searchInput.value = '';
+            isSearchActive = false;
+
             // Handle content updates based on section
             const mainContent = document.querySelector('.main-content');
             
@@ -1990,6 +2004,50 @@
                                 <a href="#" class="view-all">→</a>
                             </div>
                             <div class="track-list"></div>
+                        </div>
+                        <div class="popular-artists" style="margin-top: 40px; margin-bottom: 40px;">
+                            <div class="section-header">
+                                <h2 class="section-title-main">Popular Artists</h2>
+                                <a href="#" class="view-all">→</a>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px 0;">
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/EdSheeran', '_blank')">
+                                    <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                                        <img src="https://yt3.googleusercontent.com/n5DRh94eycw6xGcOKTn6LKQwztTwaw24fW3qXoCT_qysXM3E20TgwNLJ0J1sUWBib1TwY8-X=s800-c-k-c0x00ffffff-no-rj" 
+                                             alt="Ed Sheeran" 
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div style="font-weight: 600; margin-bottom: 5px;">Ed Sheeran</div>
+                                    <div style="color: rgba(255,255,255,0.6); font-size: 14px;">16.2M followers</div>
+                                </div>
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/channel/UCZFWPqqPkFlNwIxcpsLOwew', '_blank')">
+                                    <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                                        <img src="https://yt3.googleusercontent.com/y_esGAQOhX4rTpWvrALErAJlFbm_2TIVjQWaiXq_KMl6bQkJqBZdqHQZWPkGOBjT-0LcOgTWvA=s800-c-k-c0x00ffffff-no-rj" 
+                                             alt="Billie Eilish" 
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div style="font-weight: 600; margin-bottom: 5px;">Billie Eilish</div>
+                                    <div style="color: rgba(255,255,255,0.6); font-size: 14px;">12.8M followers</div>
+                                </div>
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/TheWeeknd', '_blank')">
+                                    <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                                        <img src="https://yt3.googleusercontent.com/QiI-c4cFyRPD6TV8KNMsXQYzqQPQjk8ZlL6gkfsqPVd0DVxNmL5_WYBTZZrqT3JEvJ_bhM5Q=s800-c-k-c0x00ffffff-no-rj" 
+                                             alt="The Weeknd" 
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div style="font-weight: 600; margin-bottom: 5px;">The Weeknd</div>
+                                    <div style="color: rgba(255,255,255,0.6); font-size: 14px;">14.5M followers</div>
+                                </div>
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/DuaLipa', '_blank')">
+                                    <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
+                                        <img src="https://yt3.googleusercontent.com/ytc/AIf8zZTUVa5AyXO8-SFO1PxMmrXkgQmQoJGZrGE8Ee9C=s800-c-k-c0x00ffffff-no-rj" 
+                                             alt="Dua Lipa" 
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div style="font-weight: 600; margin-bottom: 5px;">Dua Lipa</div>
+                                    <div style="color: rgba(255,255,255,0.6); font-size: 14px;">11.7M followers</div>
+                                </div>
+                            </div>
                         </div>
                     `;
                     generatePopularTracks();
@@ -2035,62 +2093,7 @@
         }
 
         function performSearch(query) {
-            query = query.toLowerCase().trim();
-            
-            // Search in albums
-            const albums = document.querySelectorAll('.album-card');
-            const trackList = document.querySelector('.track-list');
-            const tracks = trackList ? trackList.querySelectorAll('.track-item') : [];
-            
-            let foundResults = false;
-            
-            // Filter albums
-            albums.forEach(album => {
-                const title = album.querySelector('.album-title').textContent.toLowerCase();
-                const artist = album.querySelector('.album-artist').textContent.toLowerCase();
-                
-                if (title.includes(query) || artist.includes(query)) {
-                    album.style.display = 'block';
-                    foundResults = true;
-                } else {
-                    album.style.display = 'none';
-                }
-            });
-            
-            // Filter tracks
-            tracks.forEach(track => {
-                const title = track.querySelector('.track-title').textContent.toLowerCase();
-                const artist = track.querySelector('.track-artist').textContent.toLowerCase();
-                
-                if (title.includes(query) || artist.includes(query)) {
-                    track.style.display = 'grid';
-                    foundResults = true;
-                } else {
-                    track.style.display = 'none';
-                }
-            });
-            
-            // Show/hide results message
-            const mainContent = document.querySelector('.main-content');
-            let noResultsMessage = mainContent.querySelector('.no-results');
-            
-            if (!foundResults) {
-                if (!noResultsMessage) {
-                    noResultsMessage = document.createElement('div');
-                    noResultsMessage.classList.add('no-results');
-                    noResultsMessage.style.textAlign = 'center';
-                    noResultsMessage.style.color = 'rgba(255,255,255,0.6)';
-                    noResultsMessage.style.padding = '20px';
-                    noResultsMessage.innerHTML = `
-                        <h3>No results found</h3>
-                        <p>Try searching for a different song, artist, or album</p>
-                    `;
-                    mainContent.insertBefore(noResultsMessage, mainContent.firstChild);
-                }
-                noResultsMessage.style.display = 'block';
-            } else if (noResultsMessage) {
-                noResultsMessage.style.display = 'none';
-            }
+            // Remove old search functionality completely
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -2119,67 +2122,94 @@
                 });
             });
 
+            // Modified search input handler
             const searchInput = document.querySelector('.search-bar input');
+            let searchTimeout;
             searchInput.addEventListener('input', (e) => {
-                performSearch(e.target.value);
+                clearTimeout(searchTimeout);
+                if (e.target.value.trim()) {
+                    isSearchActive = true;
+                    searchTimeout = setTimeout(() => {
+                        searchYouTube(e.target.value);
+                    }, 500);
+                } else {
+                    isSearchActive = false;
+                    // Return to current page content
+                    const currentSection = document.querySelector('.nav-item.active').textContent.trim();
+                    handleNavigation(currentSection);
+                }
+            });
+
+            // Add music player controls
+            const playPauseBtn = document.querySelector('.play-pause');
+            playPauseBtn.addEventListener('click', togglePlayPause);
+
+            const closeEmbedBtn = document.querySelector('.close-embed-btn');
+            closeEmbedBtn.addEventListener('click', () => {
+                document.querySelector('.youtube-embed-container').style.display = 'none';
+                stopVideo();
             });
         });
 
-        function showCreatePlaylistModal() {
-            document.getElementById('createPlaylistModal').style.display = 'block';
-        }
-
-        function hideCreatePlaylistModal() {
-            document.getElementById('createPlaylistModal').style.display = 'none';
-            document.getElementById('createPlaylistForm').reset();
-            document.getElementById('imagePreview').style.display = 'none';
-            document.querySelector('.upload-placeholder').style.display = 'flex';
-        }
-
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    document.querySelector('.upload-placeholder').style.display = 'none';
+        function togglePlayPause() {
+            const pauseIcon = document.querySelector('.pause');
+            const playIcon = document.querySelector('.play');
+            
+            if (currentPlayer === 'desktop') {
+                const iframe = document.getElementById('youtube-player');
+                if (isVideoPlaying) {
+                    // Pause video
+                    iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    pauseIcon.style.display = 'none';
+                    playIcon.style.display = 'block';
+                    isVideoPlaying = false;
+                } else {
+                    // Play video
+                    iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    pauseIcon.style.display = 'block';
+                    playIcon.style.display = 'none';
+                    isVideoPlaying = true;
                 }
-                reader.readAsDataURL(file);
+            } else if (currentPlayer === 'mobile') {
+                const iframe = document.getElementById('mobile-youtube-player');
+                if (isVideoPlaying) {
+                    // Pause video
+                    iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    pauseIcon.style.display = 'none';
+                    playIcon.style.display = 'block';
+                    isVideoPlaying = false;
+                } else {
+                    // Play video
+                    iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    pauseIcon.style.display = 'block';
+                    playIcon.style.display = 'none';
+                    isVideoPlaying = true;
+                }
             }
         }
 
-        function handleCreatePlaylist(event) {
-            event.preventDefault();
+        function stopVideo() {
+            if (currentPlayer === 'desktop') {
+                const iframe = document.getElementById('youtube-player');
+                iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+                iframe.src = '';
+            } else if (currentPlayer === 'mobile') {
+                const iframe = document.getElementById('mobile-youtube-player');
+                iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+                iframe.src = '';
+            }
             
-            const name = document.getElementById('playlistName').value;
-            const description = document.getElementById('playlistDescription').value;
-            const imageFile = document.getElementById('playlistImage').files[0];
+            const pauseIcon = document.querySelector('.pause');
+            const playIcon = document.querySelector('.play');
+            pauseIcon.style.display = 'none';
+            playIcon.style.display = 'block';
+            isVideoPlaying = false;
+            currentPlayer = null;
             
-            // Get existing playlists or initialize empty array
-            let playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
-            
-            // Create new playlist object
-            const newPlaylist = {
-                id: Date.now(),
-                name,
-                description,
-                songs: [],
-                image: imageFile ? URL.createObjectURL(imageFile) : '/album1.png' // Default image if none selected
-            };
-            
-            // Add to playlists array
-            playlists.push(newPlaylist);
-            
-            // Save to localStorage
-            localStorage.setItem('playlists', JSON.stringify(playlists));
-            
-            // Update UI
-            updatePlaylistsUI();
-            
-            // Hide modal and reset form
-            hideCreatePlaylistModal();
+            // Reset player info
+            songTitle.textContent = 'No Music Selected';
+            songArtist.textContent = '';
+            playerAlbumArt.src = '/Screenshot 2025-05-24 6.36.18 PM.png';
         }
 
         function updatePlaylistsUI() {
@@ -2406,18 +2436,9 @@
 
         // Modify the search functionality to use YouTube API
         let searchTimeout;
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                searchYouTube(e.target.value);
-            }, 500);
-        });
 
         async function searchYouTube(query) {
             if (!query) {
-                // Reset to default content if search is empty
-                generateAlbumGrid();
-                generatePopularTracks();
                 return;
             }
 
