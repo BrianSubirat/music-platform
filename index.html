@@ -534,35 +534,50 @@
 
         /* New Styles */
         .youtube-embed-container {
-            position: absolute;
-            bottom: 80px;
+            position: fixed;
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 1000;
+            width: 320px;
+            height: 180px;
+            bottom: 100px;
             right: 20px;
-            background: rgba(26, 11, 46, 0.9);
-            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 1100;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: block;
+        }
+
+        .youtube-embed-container iframe {
+            width: 100%;
+            height: 100%;
         }
 
         .close-embed-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.2);
-            color: white;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
             border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s ease;
+            font-size: 18px;
         }
 
-        .close-embed-btn:hover {
-            background: rgba(255,255,255,0.3);
+        @media (max-width: 768px) {
+            .youtube-embed-container {
+                width: 100%;
+                height: 240px;
+                bottom: 90px;
+                right: 0;
+                border-radius: 0;
+            }
         }
 
         /* Mobile Navigation Bar */
@@ -1218,80 +1233,14 @@
             transform: scale(1.2);
         }
 
+        /* Remove mobile player styles */
+        .mobile-player {
+            display: none !important;
+        }
+
         /* Add new styles for fullscreen mobile player */
         .mobile-player {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a0b2e 0%, #16213e 100%);
-            z-index: 3000;
-            display: none;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .mobile-player.active {
-            display: flex;
-        }
-
-        .mobile-player-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .mobile-player-back {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        .mobile-player-info {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .mobile-player-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .mobile-player-artist {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .mobile-youtube-container {
-            width: 100%;
-            margin-bottom: 20px;
-            aspect-ratio: 16/9;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .mobile-youtube-container iframe {
-            width: 100%;
-            height: 100%;
-            border-radius: 12px;
-        }
-
-        .mobile-player-controls {
-            margin-top: auto;
-            padding: 20px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .youtube-embed-container {
-                display: none !important;
-            }
+            display: none !important;
         }
     </style>
 </head>
@@ -1477,7 +1426,7 @@
                             </button>
                             <button class="control-btn play-pause">
                                 <svg class="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M10 4H6v16h4V4zM18 4h-4v16h4V4z"/>
+                                    <path d="M10 4H6v16h4V4zM18 4h-4v16h4z"/>
                                 </svg>
                                 <svg class="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
                                     <path d="M5 4l14 8-14 8V4z"/>
@@ -1492,9 +1441,9 @@
                             <button class="control-btn repeat">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M17 2l4 4-4 4"/>
-                                    <path d="M3 11v-1a4 4 0 014-4h14"/>
+                                    <path d="M3 11v-1a4 4 0 0 1 4-4h14"/>
                                     <path d="M7 22l-4-4 4-4"/>
-                                    <path d="M21 13v1a4 4 0 01-4 4H3"/>
+                                    <path d="M21 13v1a4 4 0 0 1-4 4H3"/>
                                 </svg>
                             </button>
                         </div>
@@ -1512,8 +1461,8 @@
                             <button class="volume-btn">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M11 5L6 9H2v6h4l5 5V5z"/>
-                                    <path d="M15.54 8.46a5 5 0 010 7.07"/>
-                                    <path d="M19.07 4.93a10 10 0 010 14.14"/>
+                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
                                 </svg>
                             </button>
                             <div class="volume-slider">
@@ -1525,7 +1474,7 @@
                 </div>
                 
                 <!-- New YouTube Embed Section -->
-                <div class="youtube-embed-container" style="display: none;">
+                <div class="youtube-embed-container">
                     <iframe 
                         id="youtube-player" 
                         width="320" 
@@ -1734,30 +1683,14 @@
                 artist,
                 thumbnail
             });
-            
-            if (window.innerWidth <= 768) {
-                // Mobile view
-                const mobilePlayer = document.querySelector('.mobile-player');
-                const mobileTitle = document.querySelector('.mobile-player-title');
-                const mobileArtist = document.querySelector('.mobile-player-artist');
-                const mobileYoutubePlayer = document.getElementById('mobile-youtube-player');
 
-                mobileTitle.textContent = title;
-                mobileArtist.textContent = artist;
-                mobileYoutubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&enablejsapi=1`;
-                
-                mobilePlayer.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                currentPlayer = 'mobile';
-            } else {
-                // Desktop view
-                const youtubePlayer = document.getElementById('youtube-player');
-                youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&enablejsapi=1`;
-                document.querySelector('.youtube-embed-container').style.display = 'block';
-                currentPlayer = 'desktop';
-            }
+            // Set up the YouTube embed with autoplay enabled and start playing immediately
+            const youtubePlayer = document.getElementById('youtube-player');
+            youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1&controls=0`;
+            document.querySelector('.youtube-embed-container').style.display = 'block';
+            currentPlayer = 'desktop';
 
-            // Update play/pause button
+            // Update play/pause button state
             const pauseIcon = document.querySelector('.pause');
             const playIcon = document.querySelector('.play');
             pauseIcon.style.display = 'block';
@@ -1772,7 +1705,6 @@
             
             mobilePlayer.classList.remove('active');
             mobileYoutubePlayer.src = '';
-            document.body.style.overflow = '';
             currentPlayer = null;
             
             // Reset player info
@@ -2011,7 +1943,8 @@
                                 <a href="#" class="view-all">→</a>
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px 0;">
-                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/EdSheeran', '_blank')">
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" 
+                                     onclick="window.open('https://www.youtube.com/c/EdSheeran', '_blank')">
                                     <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
                                         <img src="https://yt3.googleusercontent.com/n5DRh94eycw6xGcOKTn6LKQwztTwaw24fW3qXoCT_qysXM3E20TgwNLJ0J1sUWBib1TwY8-X=s800-c-k-c0x00ffffff-no-rj" 
                                              alt="Ed Sheeran" 
@@ -2020,7 +1953,8 @@
                                     <div style="font-weight: 600; margin-bottom: 5px;">Ed Sheeran</div>
                                     <div style="color: rgba(255,255,255,0.6); font-size: 14px;">16.2M followers</div>
                                 </div>
-                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/channel/UCZFWPqqPkFlNwIxcpsLOwew', '_blank')">
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" 
+                                     onclick="window.open('https://www.youtube.com/channel/UCZFWPqqPkFlNwIxcpsLOwew', '_blank')">
                                     <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
                                         <img src="https://yt3.googleusercontent.com/y_esGAQOhX4rTpWvrALErAJlFbm_2TIVjQWaiXq_KMl6bQkJqBZdqHQZWPkGOBjT-0LcOgTWvA=s800-c-k-c0x00ffffff-no-rj" 
                                              alt="Billie Eilish" 
@@ -2029,7 +1963,8 @@
                                     <div style="font-weight: 600; margin-bottom: 5px;">Billie Eilish</div>
                                     <div style="color: rgba(255,255,255,0.6); font-size: 14px;">12.8M followers</div>
                                 </div>
-                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/TheWeeknd', '_blank')">
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" 
+                                     onclick="window.open('https://www.youtube.com/c/TheWeeknd', '_blank')">
                                     <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
                                         <img src="https://yt3.googleusercontent.com/QiI-c4cFyRPD6TV8KNMsXQYzqQPQjk8ZlL6gkfsqPVd0DVxNmL5_WYBTZZrqT3JEvJ_bhM5Q=s800-c-k-c0x00ffffff-no-rj" 
                                              alt="The Weeknd" 
@@ -2038,7 +1973,8 @@
                                     <div style="font-weight: 600; margin-bottom: 5px;">The Weeknd</div>
                                     <div style="color: rgba(255,255,255,0.6); font-size: 14px;">14.5M followers</div>
                                 </div>
-                                <div class="artist-card" style="text-align: center; cursor: pointer;" onclick="window.open('https://www.youtube.com/c/DuaLipa', '_blank')">
+                                <div class="artist-card" style="text-align: center; cursor: pointer;" 
+                                     onclick="window.open('https://www.youtube.com/c/DuaLipa', '_blank')">
                                     <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; margin: 0 auto 15px;">
                                         <img src="https://yt3.googleusercontent.com/ytc/AIf8zZTUVa5AyXO8-SFO1PxMmrXkgQmQoJGZrGE8Ee9C=s800-c-k-c0x00ffffff-no-rj" 
                                              alt="Dua Lipa" 
@@ -2517,68 +2453,6 @@
                 .replace(/'/g, "&#039;");
         }
     </script>
-
-    <!-- Mobile player HTML before closing body tag -->
-    <div class="mobile-player">
-        <div class="mobile-player-header">
-            <button class="mobile-player-back" onclick="closeMobilePlayer()">↓</button>
-        </div>
-        
-        <div class="mobile-youtube-container">
-            <iframe id="mobile-youtube-player" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-
-        <div class="mobile-player-info">
-            <div class="mobile-player-title">No song selected</div>
-            <div class="mobile-player-artist"></div>
-        </div>
-
-        <div class="mobile-player-controls">
-            <div class="player-controls">
-                <button class="control-btn shuffle">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
-                    </svg>
-                </button>
-                <button class="control-btn previous">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 20L9 12l10-8v16z"/>
-                        <path d="M5 19V5"/>
-                    </svg>
-                </button>
-                <button class="control-btn play-pause">
-                    <svg class="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M10 4H6v16h4V4zM18 4h-4v16h4V4z"/>
-                    </svg>
-                    <svg class="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                        <path d="M5 4l14 8-14 8V4z"/>
-                    </svg>
-                </button>
-                <button class="control-btn next">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 4l10 8-10 8V4z"/>
-                        <path d="M19 5v14"/>
-                    </svg>
-                </button>
-                <button class="control-btn repeat">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 2l4 4-4 4"/>
-                        <path d="M3 11v-1a4 4 0 014-4h14"/>
-                        <path d="M7 22l-4-4 4-4"/>
-                        <path d="M21 13v1a4 4 0 01-4 4H3"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="progress-container">
-                <div class="time current">0:00</div>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 0%"></div>
-                    <div class="progress-handle"></div>
-                </div>
-                <div class="time total">0:00</div>
-            </div>
-        </div>
-    </div>
 
     <!-- Create playlist modal -->
     <div id="createPlaylistModal" class="modal">
